@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 group-data-[collapsible=icon]:gap-0">
         <img
             src="/logo-light.png"
             alt="Temply logo"
@@ -14,12 +14,7 @@
         <img
             src="/favicon.png"
             alt="Temply icon"
-            class="hidden h-9 w-9 shrink-0 rounded-lg group-data-[collapsible=icon]:block dark:hidden"
-        />
-        <img
-            src="/favicon.png"
-            alt=""
-            class="hidden h-9 w-9 shrink-0 rounded-lg group-data-[collapsible=icon]:block dark:block dark:opacity-90"
+            class="hidden h-7 w-7 shrink-0 rounded-lg group-data-[collapsible=icon]:block dark:invert"
         />
     </div>
 </template>

@@ -1,0 +1,8 @@
+export { default as SectionPanel } from './SectionPanel.vue'
+export { default as BasicInformationSection } from './BasicInformationSection.vue'
+export { default as ProfessionalSummarySection } from './ProfessionalSummarySection.vue'
+export { default as WorkExperienceSection } from './WorkExperienceSection.vue'
+export { default as EducationSection } from './EducationSection.vue'
+export { default as SkillsSection } from './SkillsSection.vue'
+export { default as LanguagesSection } from './LanguagesSection.vue'
+
