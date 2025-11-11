@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('cv_languages', function (Blueprint $table): void {
+        Schema::create('resume_languages', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignUuid('cv_id')->constrained('cvs')->cascadeOnDelete();
+            $table->foreignUuid('resume_id')->constrained('resumes')->cascadeOnDelete();
             $table->string('language');
             $table->string('proficiency')->nullable();
             $table->boolean('is_native')->default(false);
@@ -21,16 +18,13 @@ return new class extends Migration
             $table->jsonb('metadata')->nullable();
             $table->timestampsTz();
 
-            $table->index(['cv_id', 'sort_order']);
-            $table->index(['cv_id', 'is_native']);
+            $table->index(['resume_id', 'sort_order']);
+            $table->index(['resume_id', 'is_native']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('cv_languages');
+        Schema::dropIfExists('resume_languages');
     }
 };

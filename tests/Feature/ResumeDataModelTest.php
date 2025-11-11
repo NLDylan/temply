@@ -2,18 +2,18 @@
 
 use App\Enums\TemplateType;
 use App\Models\CoverLetter;
-use App\Models\Cv;
-use App\Models\CvCertification;
-use App\Models\CvEducation;
-use App\Models\CvExperience;
-use App\Models\CvLanguage;
-use App\Models\CvProject;
-use App\Models\CvSkill;
+use App\Models\Resume;
+use App\Models\ResumeCertification;
+use App\Models\ResumeEducation;
+use App\Models\ResumeExperience;
+use App\Models\ResumeLanguage;
+use App\Models\ResumeProject;
+use App\Models\ResumeSkill;
 use App\Models\Template;
 use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 
-it('creates expected schema for templates, cvs, cover letters, and sections', function (): void {
+it('creates expected schema for templates, resumes, cover letters, and sections', function (): void {
     expect(Schema::hasTable('templates'))->toBeTrue();
     expect(Schema::hasColumns('templates', [
         'id',
@@ -27,8 +27,8 @@ it('creates expected schema for templates, cvs, cover letters, and sections', fu
         'updated_at',
     ]))->toBeTrue();
 
-    expect(Schema::hasTable('cvs'))->toBeTrue();
-    expect(Schema::hasColumns('cvs', [
+    expect(Schema::hasTable('resumes'))->toBeTrue();
+    expect(Schema::hasColumns('resumes', [
         'id',
         'user_id',
         'template_id',
@@ -50,7 +50,7 @@ it('creates expected schema for templates, cvs, cover letters, and sections', fu
         'id',
         'user_id',
         'template_id',
-        'cv_id',
+        'resume_id',
         'title',
         'slug',
         'recipient_name',
@@ -64,15 +64,15 @@ it('creates expected schema for templates, cvs, cover letters, and sections', fu
     ]))->toBeTrue();
 
     foreach ([
-        'cv_education',
-        'cv_experience',
-        'cv_skills',
-        'cv_languages',
-        'cv_certifications',
-        'cv_projects',
+        'resume_education',
+        'resume_experience',
+        'resume_skills',
+        'resume_languages',
+        'resume_certifications',
+        'resume_projects',
     ] as $table) {
         expect(Schema::hasTable($table))->toBeTrue();
-        expect(Schema::hasColumn($table, 'cv_id'))->toBeTrue();
+        expect(Schema::hasColumn($table, 'resume_id'))->toBeTrue();
         expect(Schema::hasColumn($table, 'sort_order'))->toBeTrue();
         expect(Schema::hasColumn($table, 'created_at'))->toBeTrue();
         expect(Schema::hasColumn($table, 'updated_at'))->toBeTrue();
@@ -80,36 +80,37 @@ it('creates expected schema for templates, cvs, cover letters, and sections', fu
 });
 
 it('casts template type to enum and applies defaults', function (): void {
-    $template = Template::query()->create([
-        'name' => 'Classic CV',
-        'slug' => 'classic-cv',
+    $resumeTemplate = Template::query()->create([
+        'name' => 'Classic Resume',
+        'slug' => 'classic-resume',
     ]);
 
-    expect($template->type)->toBe(TemplateType::Cv)
-        ->and($template->is_active)->toBeTrue()
-        ->and($template->supportsCv())->toBeTrue()
-        ->and($template->supportsCoverLetter())->toBeFalse();
+    expect($resumeTemplate->type)->toBe(TemplateType::Resume)
+        ->and($resumeTemplate->is_active)->toBeTrue()
+        ->and($resumeTemplate->supportsResume())->toBeTrue()
+        ->and($resumeTemplate->supportsCoverLetter())->toBeFalse();
 
-    $coverLetterTemplate = Template::query()->create([
+    $comboTemplate = Template::query()->create([
         'name' => 'Universal',
         'slug' => 'universal',
         'type' => TemplateType::Both,
         'is_active' => false,
     ]);
 
-    expect($coverLetterTemplate->type)->toBe(TemplateType::Both)
-        ->and($coverLetterTemplate->is_active)->toBeFalse()
-        ->and($coverLetterTemplate->supportsCoverLetter())->toBeTrue();
+    expect($comboTemplate->type)->toBe(TemplateType::Both)
+        ->and($comboTemplate->is_active)->toBeFalse()
+        ->and($comboTemplate->supportsCoverLetter())->toBeTrue()
+        ->and($comboTemplate->supportsResume())->toBeTrue();
 });
 
-it('relates CV aggregates and cascades sections on delete', function (): void {
+it('relates resume aggregates and cascades sections on delete', function (): void {
     $user = User::factory()->create();
     $template = Template::query()->create([
-        'name' => 'Modern CV',
-        'slug' => 'modern-cv',
+        'name' => 'Modern Resume',
+        'slug' => 'modern-resume',
     ]);
 
-    $cv = Cv::query()->create([
+    $resume = Resume::query()->create([
         'user_id' => $user->id,
         'template_id' => $template->id,
         'title' => 'Product Designer',
@@ -118,69 +119,69 @@ it('relates CV aggregates and cascades sections on delete', function (): void {
         'location' => 'Remote',
     ]);
 
-    $educationA = CvEducation::query()->create([
-        'cv_id' => $cv->id,
+    $educationA = ResumeEducation::query()->create([
+        'resume_id' => $resume->id,
         'institution' => 'Design University',
         'degree' => 'BFA',
         'sort_order' => 2,
     ]);
 
-    $educationB = CvEducation::query()->create([
-        'cv_id' => $cv->id,
+    $educationB = ResumeEducation::query()->create([
+        'resume_id' => $resume->id,
         'institution' => 'Community College',
         'degree' => 'AA',
         'sort_order' => 1,
     ]);
 
-    CvExperience::query()->create([
-        'cv_id' => $cv->id,
+    ResumeExperience::query()->create([
+        'resume_id' => $resume->id,
         'company' => 'Acme',
         'role' => 'Lead Designer',
         'is_current' => true,
     ]);
 
-    CvSkill::query()->create([
-        'cv_id' => $cv->id,
+    ResumeSkill::query()->create([
+        'resume_id' => $resume->id,
         'name' => 'Figma',
         'is_featured' => true,
     ]);
 
-    CvLanguage::query()->create([
-        'cv_id' => $cv->id,
+    ResumeLanguage::query()->create([
+        'resume_id' => $resume->id,
         'language' => 'English',
         'is_native' => true,
     ]);
 
-    CvCertification::query()->create([
-        'cv_id' => $cv->id,
+    ResumeCertification::query()->create([
+        'resume_id' => $resume->id,
         'name' => 'UX Certification',
         'issuer' => 'NN/g',
     ]);
 
-    CvProject::query()->create([
-        'cv_id' => $cv->id,
+    ResumeProject::query()->create([
+        'resume_id' => $resume->id,
         'name' => 'Portfolio Refresh',
         'is_current' => true,
     ]);
 
-    expect($cv->education->pluck('id')->all())->toBe([$educationB->id, $educationA->id])
-        ->and($cv->experience)->toHaveCount(1)
-        ->and($cv->skills)->toHaveCount(1)
-        ->and($cv->languages)->toHaveCount(1)
-        ->and($cv->certifications)->toHaveCount(1)
-        ->and($cv->projects)->toHaveCount(1);
+    expect($resume->education->pluck('id')->all())->toBe([$educationB->id, $educationA->id])
+        ->and($resume->experience)->toHaveCount(1)
+        ->and($resume->skills)->toHaveCount(1)
+        ->and($resume->languages)->toHaveCount(1)
+        ->and($resume->certifications)->toHaveCount(1)
+        ->and($resume->projects)->toHaveCount(1);
 
-    $cv->delete();
+    $resume->delete();
 
-    expect(CvEducation::query()->count())->toBe(0)
-        ->and(CvExperience::query()->count())->toBe(0)
-        ->and(CvSkill::query()->count())->toBe(0)
-        ->and(CvLanguage::query()->count())->toBe(0)
-        ->and(CvCertification::query()->count())->toBe(0)
-        ->and(CvProject::query()->count())->toBe(0);
+    expect(ResumeEducation::query()->count())->toBe(0)
+        ->and(ResumeExperience::query()->count())->toBe(0)
+        ->and(ResumeSkill::query()->count())->toBe(0)
+        ->and(ResumeLanguage::query()->count())->toBe(0)
+        ->and(ResumeCertification::query()->count())->toBe(0)
+        ->and(ResumeProject::query()->count())->toBe(0);
 });
 
-it('associates cover letters with users, templates, and CVs', function (): void {
+it('associates cover letters with users, templates, and resumes', function (): void {
     $user = User::factory()->create();
     $template = Template::query()->create([
         'name' => 'Letter Pro',
@@ -188,17 +189,17 @@ it('associates cover letters with users, templates, and CVs', function (): void 
         'type' => TemplateType::CoverLetter,
     ]);
 
-    $cv = Cv::query()->create([
+    $resume = Resume::query()->create([
         'user_id' => $user->id,
         'template_id' => $template->id,
-        'title' => 'Dev CV',
-        'slug' => 'dev-cv',
+        'title' => 'Dev Resume',
+        'slug' => 'dev-resume',
     ]);
 
     $coverLetter = CoverLetter::query()->create([
         'user_id' => $user->id,
         'template_id' => $template->id,
-        'cv_id' => $cv->id,
+        'resume_id' => $resume->id,
         'title' => 'Senior Developer Cover Letter',
         'slug' => 'senior-developer',
         'recipient_name' => 'Alex Doe',
@@ -207,5 +208,5 @@ it('associates cover letters with users, templates, and CVs', function (): void 
 
     expect($coverLetter->user->is($user))->toBeTrue()
         ->and($coverLetter->template?->supportsCoverLetter())->toBeTrue()
-        ->and($coverLetter->cv?->is($cv))->toBeTrue();
+        ->and($coverLetter->resume?->is($resume))->toBeTrue();
 });

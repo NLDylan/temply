@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('cv_certifications', function (Blueprint $table): void {
+        Schema::create('resume_certifications', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignUuid('cv_id')->constrained('cvs')->cascadeOnDelete();
+            $table->foreignUuid('resume_id')->constrained('resumes')->cascadeOnDelete();
             $table->string('name');
             $table->string('issuer')->nullable();
             $table->date('issued_on')->nullable();
@@ -25,17 +22,14 @@ return new class extends Migration
             $table->jsonb('metadata')->nullable();
             $table->timestampsTz();
 
-            $table->index(['cv_id', 'sort_order']);
-            $table->index(['cv_id', 'issued_on']);
-            $table->index(['cv_id', 'expires_on']);
+            $table->index(['resume_id', 'sort_order']);
+            $table->index(['resume_id', 'issued_on']);
+            $table->index(['resume_id', 'expires_on']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('cv_certifications');
+        Schema::dropIfExists('resume_certifications');
     }
 };

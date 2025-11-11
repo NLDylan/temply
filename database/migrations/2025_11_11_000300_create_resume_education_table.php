@@ -6,17 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('cv_experience', function (Blueprint $table): void {
+        Schema::create('resume_education', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->foreignUuid('cv_id')->constrained('cvs')->cascadeOnDelete();
-            $table->string('company');
-            $table->string('role');
-            $table->string('employment_type')->nullable();
+            $table->foreignUuid('resume_id')->constrained('resumes')->cascadeOnDelete();
+            $table->string('institution');
+            $table->string('degree')->nullable();
+            $table->string('field_of_study')->nullable();
             $table->string('location')->nullable();
             $table->date('started_on')->nullable();
             $table->date('ended_on')->nullable();
@@ -25,16 +22,13 @@ return new class extends Migration
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->timestampsTz();
 
-            $table->index(['cv_id', 'sort_order']);
-            $table->index(['cv_id', 'is_current']);
+            $table->index(['resume_id', 'sort_order']);
+            $table->index(['resume_id', 'is_current']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('cv_experience');
+        Schema::dropIfExists('resume_education');
     }
 };

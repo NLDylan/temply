@@ -4,16 +4,16 @@ namespace App\Enums;
 
 enum TemplateType: string
 {
-    case Cv = 'cv';
+    case Resume = 'resume';
     case CoverLetter = 'cover_letter';
     case Both = 'both';
 
     /**
-     * Determine if the template can be used for CVs.
+     * Determine if the template can be used for resumes.
      */
-    public function supportsCv(): bool
+    public function supportsResume(): bool
     {
-        return $this === self::Cv || $this === self::Both;
+        return $this === self::Resume || $this === self::Both;
     }
 
     /**

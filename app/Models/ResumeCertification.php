@@ -7,44 +7,41 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CvSkill extends Model
+class ResumeCertification extends Model
 {
     use HasFactory;
     use HasUuids;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
-        'cv_id',
+        'resume_id',
         'name',
-        'category',
-        'proficiency',
-        'is_featured',
+        'issuer',
+        'issued_on',
+        'expires_on',
+        'credential_id',
+        'credential_url',
+        'description',
         'sort_order',
         'metadata',
     ];
 
     /**
-     * The attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
-            'is_featured' => 'boolean',
+            'issued_on' => 'date',
+            'expires_on' => 'date',
             'metadata' => 'array',
         ];
     }
 
-    /**
-     * The CV this skill belongs to.
-     */
-    public function cv(): BelongsTo
+    public function resume(): BelongsTo
     {
-        return $this->belongsTo(Cv::class);
+        return $this->belongsTo(Resume::class);
     }
 }

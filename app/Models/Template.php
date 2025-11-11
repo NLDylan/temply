@@ -14,8 +14,6 @@ class Template extends Model
     use HasUuids;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
@@ -28,8 +26,6 @@ class Template extends Model
     ];
 
     /**
-     * The attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
@@ -42,17 +38,11 @@ class Template extends Model
         ];
     }
 
-    /**
-     * CVs that use this template.
-     */
-    public function cvs(): HasMany
+    public function resumes(): HasMany
     {
-        return $this->hasMany(Cv::class);
+        return $this->hasMany(Resume::class);
     }
 
-    /**
-     * Cover letters that use this template.
-     */
     public function coverLetters(): HasMany
     {
         return $this->hasMany(CoverLetter::class);

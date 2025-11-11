@@ -7,21 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CvExperience extends Model
+class ResumeEducation extends Model
 {
     use HasFactory;
     use HasUuids;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
-        'cv_id',
-        'company',
-        'role',
-        'employment_type',
+        'resume_id',
+        'institution',
+        'degree',
+        'field_of_study',
         'location',
         'started_on',
         'ended_on',
@@ -31,8 +29,6 @@ class CvExperience extends Model
     ];
 
     /**
-     * The attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
@@ -44,11 +40,8 @@ class CvExperience extends Model
         ];
     }
 
-    /**
-     * The CV this experience entry belongs to.
-     */
-    public function cv(): BelongsTo
+    public function resume(): BelongsTo
     {
-        return $this->belongsTo(Cv::class);
+        return $this->belongsTo(Resume::class);
     }
 }
