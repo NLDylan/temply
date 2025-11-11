@@ -1,30 +1,26 @@
 <template>
-    <div
-        class="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0"
-    >
-        <span class="relative flex h-9 w-9 shrink-0 items-center justify-center">
-            <img
-                src="/logo-light.png"
-                alt="Temply logo"
-                class="h-8 w-8 dark:hidden"
-            />
-            <img
-                src="/logo-dark.png"
-                alt=""
-                class="hidden h-8 w-8 dark:block"
-            />
-        </span>
+    <div class="flex items-center gap-2">
+        <img
+            src="/logo-light.png"
+            alt="Temply logo"
+            class="h-10 shrink-0 dark:hidden group-data-[collapsible=icon]:hidden"
+        />
+        <img
+            src="/logo-dark.png"
+            alt=""
+            class="hidden h-10 shrink-0 dark:block group-data-[collapsible=icon]:hidden"
+        />
 
-        <div
-            class="grid flex-1 text-left text-sm group-data-[collapsible=icon]:hidden"
-        >
-            <span class="font-semibold leading-tight text-sidebar-foreground">
-                Temply
-            </span>
-            <span class="text-xs text-sidebar-foreground/70">
-                CV Builder
-            </span>
-        </div>
+        <img
+            src="/favicon.png"
+            alt="Temply icon"
+            class="hidden h-9 w-9 shrink-0 rounded-lg group-data-[collapsible=icon]:block dark:hidden"
+        />
+        <img
+            src="/favicon.png"
+            alt=""
+            class="hidden h-9 w-9 shrink-0 rounded-lg group-data-[collapsible=icon]:block dark:block dark:opacity-90"
+        />
     </div>
 </template>
 
