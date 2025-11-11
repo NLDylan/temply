@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('proficiency')->nullable();
             $table->boolean('is_native')->default(false);
             $table->unsignedSmallInteger('sort_order')->default(0);
-            $table->json('metadata')->nullable();
+            $table->jsonb('metadata')->nullable();
             $table->timestampsTz();
 
             $table->index(['cv_id', 'sort_order']);

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('recipient_company')->nullable();
             $table->string('subject')->nullable();
             $table->longText('body');
-            $table->json('metadata')->nullable();
+            $table->jsonb('metadata')->nullable();
             $table->timestampsTz();
 
             $table->unique(['user_id', 'slug']);

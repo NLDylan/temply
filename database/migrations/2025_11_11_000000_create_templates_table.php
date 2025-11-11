@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('type')->default(TemplateType::Cv->value);
-            $table->json('metadata')->nullable();
+            $table->jsonb('metadata')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestampTz('published_at')->nullable();
             $table->timestampsTz();

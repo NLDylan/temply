@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('headline')->nullable();
             $table->string('location')->nullable();
             $table->text('summary')->nullable();
-            $table->json('profile')->nullable();
-            $table->json('settings')->nullable();
+            $table->jsonb('profile')->nullable();
+            $table->jsonb('settings')->nullable();
             $table->timestampTz('expires_at')->nullable();
             $table->timestampTz('locked_at')->nullable();
             $table->timestampsTz();
