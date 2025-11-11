@@ -1,16 +1,30 @@
-<script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
-</script>
-
 <template>
     <div
-        class="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
+        class="flex items-center gap-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0"
     >
-        <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
-    </div>
-    <div class="ml-1 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate leading-tight font-semibold"
-            >Laravel Starter Kit</span
+        <span class="relative flex h-9 w-9 shrink-0 items-center justify-center">
+            <img
+                src="/logo-light.png"
+                alt="Temply logo"
+                class="h-8 w-8 dark:hidden"
+            />
+            <img
+                src="/logo-dark.png"
+                alt=""
+                class="hidden h-8 w-8 dark:block"
+            />
+        </span>
+
+        <div
+            class="grid flex-1 text-left text-sm group-data-[collapsible=icon]:hidden"
         >
+            <span class="font-semibold leading-tight text-sidebar-foreground">
+                Temply
+            </span>
+            <span class="text-xs text-sidebar-foreground/70">
+                CV Builder
+            </span>
+        </div>
     </div>
 </template>
+

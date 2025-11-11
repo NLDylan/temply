@@ -1,0 +1,87 @@
+---
+alwaysApply: true
+---
+
+# 🧠 Cursor Rules — CV Builder Project
+
+## 🏗️ Project Overview
+
+This project is a **CV Builder SaaS** built with **Laravel 12** and **Inertia.js (Vue 3)**.  
+Users can **create beautiful CVs**, manage them for **1 year after a one-time payment**, and **download them as PDFs** after expiration (locked state).
+
+The platform focuses on **simplicity, elegance, and performance**, powered by modern Laravel and Vue tooling.
+
+---
+
+## ⚙️ Tech Stack
+
+### 🧩 Backend
+- **Laravel 12**
+- **PostgreSQL**
+- **UUIDs** as primary keys for all models (use `Str::uuid()` or Laravel’s built-in UUID casting)
+- **Spatie Media Library** for handling images, templates, and PDF exports
+- **Spatie Permissions** for roles and access control (roles: `user`, `admin`)
+- **Laravel Horizon** for managing queued jobs (PDF generation, notifications)
+- **Laravel Herd** for local development
+- **Laravel Boost** for production performance optimization
+- **Queues / Jobs** for async PDF rendering (Browershot)
+
+### 💻 Frontend
+- **Inertia.js + Vue 3**
+- **ShadCN Vue** for UI components and design consistency
+- **TailwindCSS** for styling (use custom brand colors and responsive layouts)
+- **Vue Router** handled by Inertia pages
+- **Component structure:**
+  - `resources/js/Pages/` → full pages
+  - `resources/js/Components/` → reusable UI components
+  - `resources/js/Layouts/` → shared layout (sidebar, navbar, etc.)
+
+---
+
+## 🎨 Design System
+
+Use **ShadCN Vue** with **TailwindCSS** to create a cohesive and modern interface:
+- **Sidebar layout** (like Notion / Framer style)
+- **rounded corners (`rounded-2xl`)**
+- **Font sizes:** `text-sm`, `text-base`, `text-xl` for hierarchy
+- **Primary color palette:** defined in Tailwind config (e.g., `brand`, `brand-foreground`)
+
+---
+
+## 🧾 Core Features
+
+1. **CV Builder Interface**
+   - Editable fields: personal info, experience, education, skills, languages, photo
+   - Sidebar navigation with live preview
+   - Autosave functionality via Inertia requests
+
+2. **Templates**
+   - Built in **TailwindCSS**
+   - Stored as separate Blade or Vue components
+   - Rendered to PDF via **Spatie Browsershot**
+   - Linked to **Media Library** for storage & retrieval
+
+3. **Payments & Access**
+   - One-time Stripe payment
+   - Access valid for **1 year**
+   - After expiration:
+     - CV is locked
+     - User can only download their PDF
+     - Option to renew access (extend 1 year)
+
+4. **PDF Generation**
+   - Use **Spatie Browsershot** for high-fidelity rendering
+   - Processed asynchronously via **Jobs**
+   - Saved to **Media Library** and linked to the user’s CV record
+
+---
+
+## 🧠 Development Guidelines
+
+### Naming & Structure
+- Use **PascalCase** for Vue components.
+- Use **snake_case** for database columns.
+- Use **Service Classes** for business logic (`App\Services\CV\CVBuilderService`).
+- Use **Actions** for one-off tasks (`App\Actions\GenerateCVPdf`).
+
+### Example Folder Structure
