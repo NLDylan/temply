@@ -1,33 +1,65 @@
 <script setup lang="ts">
+import InputError from '@/components/InputError.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import SectionPanel from './SectionPanel.vue'
-import { ref } from 'vue'
+import type { Form } from '@inertiajs/vue3'
 import { Link2, Plus, Trash2, UploadCloud } from 'lucide-vue-next'
+import { computed } from 'vue'
+import type { ResumeBasicInformationFormData } from '@/types/models/resume'
 
-const contactLinks = ref([
-  { id: crypto.randomUUID(), label: 'Portfolio', value: 'https://dylanjonker.com' },
-  { id: crypto.randomUUID(), label: 'LinkedIn', value: 'linkedin.com/in/dylanjonker' },
-])
+const props = defineProps<{
+  form?: Form<ResumeBasicInformationFormData>
+}>()
+
+const form = computed(() => props.form)
+
+function generateLinkId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+
+  return Math.random().toString(36).slice(2)
+}
 
 function addContactLink() {
-  contactLinks.value.push({
-    id: crypto.randomUUID(),
+  const currentForm = form.value
+
+  if (!currentForm) {
+    return
+  }
+
+  currentForm.profile.contact_links.push({
+    id: generateLinkId(),
     label: '',
-    value: '',
+    url: '',
   })
 }
 
 function removeContactLink(id: string) {
-  contactLinks.value = contactLinks.value.filter((link) => link.id !== id)
+  const currentForm = form.value
+
+  if (!currentForm) {
+    return
+  }
+
+  const links = currentForm.profile.contact_links
+  const index = links.findIndex((link) => link.id === id)
+
+  if (index === -1) {
+    return
+  }
+
+  links.splice(index, 1)
 }
 </script>
 
 <template>
   <SectionPanel
+    v-if="form"
     title="Basic information"
     description="Introduce yourself with a strong first impression. This information will anchor the rest of your resume."
     hint="Keep your headline aligned with the role you're targeting. Your contact details should be easy to scan at a glance."
@@ -37,27 +69,63 @@ function removeContactLink(id: string) {
         <div class="grid gap-4 md:grid-cols-2">
           <div class="grid gap-2">
             <Label for="full-name">Full name</Label>
-            <Input id="full-name" placeholder="Jordan Walker" autocomplete="name" />
+            <Input
+              id="full-name"
+              v-model="form.profile.full_name"
+              placeholder="Jordan Walker"
+              autocomplete="name"
+            />
+            <InputError :message="form.errors['profile.full_name']" />
           </div>
           <div class="grid gap-2">
             <Label for="headline">Headline / Role</Label>
-            <Input id="headline" placeholder="Senior Product Designer" />
+            <Input
+              id="headline"
+              v-model="form.headline"
+              placeholder="Senior Product Designer"
+            />
+            <InputError :message="form.errors.headline" />
           </div>
           <div class="grid gap-2">
             <Label for="email">Email</Label>
-            <Input id="email" type="email" placeholder="hello@yourdomain.com" autocomplete="email" />
+            <Input
+              id="email"
+              v-model="form.profile.email"
+              type="email"
+              placeholder="hello@yourdomain.com"
+              autocomplete="email"
+            />
+            <InputError :message="form.errors['profile.email']" />
           </div>
           <div class="grid gap-2">
             <Label for="phone">Phone</Label>
-            <Input id="phone" type="tel" placeholder="+1 555 000 1234" autocomplete="tel" />
+            <Input
+              id="phone"
+              v-model="form.profile.phone"
+              type="tel"
+              placeholder="+1 555 000 1234"
+              autocomplete="tel"
+            />
+            <InputError :message="form.errors['profile.phone']" />
           </div>
           <div class="grid gap-2">
             <Label for="location">Location</Label>
-            <Input id="location" placeholder="Remote · Cape Town, ZA" autocomplete="address-level2" />
+            <Input
+              id="location"
+              v-model="form.location"
+              placeholder="Remote · Cape Town, ZA"
+              autocomplete="address-level2"
+            />
+            <InputError :message="form.errors.location" />
           </div>
           <div class="grid gap-2">
             <Label for="working-rights">Working rights</Label>
-            <Input id="working-rights" placeholder="Eligible to work in South Africa & EU" />
+            <Input
+              id="working-rights"
+              v-model="form.profile.working_rights"
+              placeholder="Eligible to work in South Africa & EU"
+            />
+            <InputError :message="form.errors['profile.working_rights']" />
           </div>
         </div>
 
@@ -74,20 +142,22 @@ function removeContactLink(id: string) {
 
           <CardContent class="divide-y divide-border/20 p-0">
             <div
-              v-for="link in contactLinks"
+              v-for="(link, index) in form.profile.contact_links"
               :key="link.id"
               class="grid gap-4 px-4 py-4 md:grid-cols-[160px,1fr,auto] md:items-end"
             >
               <div class="grid gap-2">
                 <Label>Label</Label>
                 <Input v-model="link.label" placeholder="LinkedIn" />
+                <InputError :message="form.errors[`profile.contact_links.${index}.label`]" />
               </div>
               <div class="grid gap-2">
                 <Label>URL</Label>
                 <div class="relative">
-                  <Input v-model="link.value" placeholder="https://linkedin.com/in/username" class="pl-9" />
+                  <Input v-model="link.url" placeholder="https://linkedin.com/in/username" class="pl-9" />
                   <Link2 class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-primary/80" />
                 </div>
+                <InputError :message="form.errors[`profile.contact_links.${index}.url`]" />
               </div>
               <Button
                 variant="ghost"
@@ -98,6 +168,9 @@ function removeContactLink(id: string) {
                 <Trash2 class="size-4" />
                 <span class="sr-only">Remove link</span>
               </Button>
+            </div>
+            <div v-if="form.errors['profile.contact_links']" class="px-4 pb-4 pt-0">
+              <InputError :message="form.errors['profile.contact_links']" />
             </div>
           </CardContent>
         </Card>
