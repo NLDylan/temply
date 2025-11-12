@@ -9,7 +9,7 @@ import SectionPanel from './SectionPanel.vue'
 import type { Form } from '@inertiajs/vue3'
 import { Link2, Plus, Trash2, UploadCloud } from 'lucide-vue-next'
 import { computed } from 'vue'
-import type { ResumeBasicInformationFormData } from '@/types/models/resume'
+import type { ResumeBasicInformationFormData } from '@/types/resume'
 
 const props = defineProps<{
   form?: Form<ResumeBasicInformationFormData>

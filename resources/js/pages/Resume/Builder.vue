@@ -27,7 +27,7 @@ import { update as updateResume } from '@/routes/resumes'
 import type {
   ResumeBasicInformationFormData,
   ResumeResource,
-} from '@/types/models/resume'
+} from '@/types/resume'
 
 interface ResumeSectionEntry {
   group: ResumeSectionGroup
@@ -167,21 +167,16 @@ function handleSectionSelect(sectionId: string) {
 function saveBasicInformation() {
   const contactLinks = form.profile?.contact_links ?? []
 
-  const payload = {
-    headline: form.headline,
-    location: form.location,
-    profile: {
-      ...form.profile,
-      contact_links: contactLinks.map((link) => ({
-        id: link.id ?? generateLinkId(),
-        label: link.label ?? '',
-        url: link.url ?? '',
-      })),
-    },
+  form.profile = {
+    ...form.profile,
+    contact_links: contactLinks.map((link) => ({
+      id: link.id ?? generateLinkId(),
+      label: link.label ?? '',
+      url: link.url ?? '',
+    })),
   }
 
   form.submit('patch', updateResume.url({ resume: props.resume.id }), {
-    data: payload,
     preserveScroll: true,
     onSuccess: () => {
       lastSavedAt.value = new Date()
