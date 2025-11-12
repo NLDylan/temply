@@ -29,6 +29,17 @@ interface ResumeSectionEntry {
   section: ResumeSection
 }
 
+interface ResumePayload {
+  id: string
+  title?: string | null
+  headline?: string | null
+  updated_at?: string | null
+}
+
+const props = defineProps<{
+  resume: ResumePayload
+}>()
+
 const activeSection = ref('basic-info')
 const completedSections = ref(['basic-info', 'professional-summary'])
 const pinnedSections = ref(['work-experience'])
@@ -82,7 +93,10 @@ watchEffect(() => {
   }
 })
 
-const lastSavedAt = ref(new Date())
+const resumeTitle = computed(() => props.resume?.title ?? 'Resume builder')
+const lastSavedAt = ref(
+  props.resume?.updated_at ? new Date(props.resume.updated_at) : new Date(),
+)
 
 function handleSectionSelect(sectionId: string) {
   if (!sectionsMap.value.has(sectionId)) {
@@ -98,10 +112,10 @@ function markSaved() {
 </script>
 
 <template>
-  <Head title="Resume Builder" />
+  <Head :title="resumeTitle" />
 
   <ResumeBuilderLayout
-    title="Resume builder"
+    :title="resumeTitle"
   >
     <template #title-addon>
       <div class="hidden flex-wrap items-center gap-3 text-xs text-muted-foreground sm:flex">

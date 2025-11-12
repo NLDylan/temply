@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import { index as resumesIndex } from '@/routes/resumes';
+import { index as resumesIndex, edit as resumesEdit } from '@/routes/resumes';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -106,9 +106,14 @@ function formatDate(value?: string | null): string {
                             <Eye class="mr-2 h-4 w-4" />
                             View
                         </Button>
-                        <Button size="sm" variant="outline" disabled>
-                            <Pencil class="mr-2 h-4 w-4" />
-                            Edit
+                        <Button as-child size="sm" variant="outline">
+                            <Link
+                                :href="resumesEdit(resume).url"
+                                class="inline-flex items-center gap-2"
+                            >
+                                <Pencil class="h-4 w-4" />
+                                Edit
+                            </Link>
                         </Button>
                         <Button size="sm" variant="outline" disabled>
                             <Download class="mr-2 h-4 w-4" />
