@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Resume\ResumeIndexController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -15,6 +16,8 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/resumes', ResumeIndexController::class)->name('resumes.index');
+
     Route::get('/resume/builder', function () {
         return Inertia::render('Resume/Builder');
     })->name('resume.builder');
