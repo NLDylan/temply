@@ -3,7 +3,14 @@ import { Head } from '@inertiajs/vue3'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import ResumeBuilderLayout from '@/layouts/resume/ResumeBuilderLayout.vue'
-import { AppResumeSidebar, resumeSectionGroups } from '@/components/ResumeBuilder/Sidebar'
+import {
+  AppResumeSidebar,
+  resumeSectionGroups,
+} from '@/components/ResumeBuilder/Sidebar'
+import type {
+  ResumeSection,
+  ResumeSectionGroup,
+} from '@/components/ResumeBuilder/Sidebar'
 import {
   BasicInformationSection,
   EducationSection,
@@ -12,10 +19,14 @@ import {
   SkillsSection,
   WorkExperienceSection,
 } from '@/components/ResumeBuilder/Sections'
-import { useMagicKeys } from '@vueuse/core'
 import type { Component } from 'vue'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { Download, Link2, Share2, ShieldCheck } from 'lucide-vue-next'
+
+interface ResumeSectionEntry {
+  group: ResumeSectionGroup
+  section: ResumeSection
+}
 
 const activeSection = ref('basic-info')
 const completedSections = ref(['basic-info', 'professional-summary'])
@@ -36,98 +47,53 @@ const sectionComponents: Record<string, Component> = {
   'custom-sections': ProfessionalSummarySection,
 } as const
 
-const flatSections = computed(() =>
-  resumeSectionGroups.flatMap((group) => group.items),
+const sectionEntries = computed((): ResumeSectionEntry[] =>
+  resumeSectionGroups.flatMap((group) =>
+    group.items.map((section) => ({
+      group,
+      section,
+    })),
+  ),
 )
 
+const sectionsMap = computed(() => {
+  const map = new Map<string, ResumeSectionEntry>()
+  sectionEntries.value.forEach((entry) => {
+    map.set(entry.section.id, entry)
+  })
+
+  return map
+})
+
+const firstSectionId = computed(() => sectionEntries.value[0]?.section.id ?? null)
+const activeSectionEntry = computed(() => sectionsMap.value.get(activeSection.value))
+const activeSectionComponent = computed<Component | null>(
+  () => sectionComponents[activeSection.value] ?? null,
+)
+
+watchEffect(() => {
+  if (!firstSectionId.value) {
+    return
+  }
+
+  if (!sectionsMap.value.has(activeSection.value)) {
+    activeSection.value = firstSectionId.value
+  }
+})
+
 const lastSavedAt = ref(new Date())
-const sectionElements = new Map<string, HTMLElement>()
-let observer: IntersectionObserver | null = null
-const visibleSections = new Map<string, number>()
-
-function assignSectionRef(sectionId: string, el: HTMLElement | null) {
-  const existing = sectionElements.get(sectionId)
-  if (existing && observer) {
-    observer.unobserve(existing)
-    sectionElements.delete(sectionId)
-  }
-
-  if (el) {
-    el.id = `resume-section-${sectionId}`
-    sectionElements.set(sectionId, el)
-    observer?.observe(el)
-  }
-}
-
-function setActiveSectionFromObserver() {
-  if (!visibleSections.size) {
-    return
-  }
-
-  const [topSection] = Array.from(visibleSections.entries())
-    .sort((a, b) => b[1] - a[1])
-
-  if (!topSection) {
-    return
-  }
-
-  const sectionId = topSection[0].replace('resume-section-', '')
-  if (sectionsMap.value.has(sectionId)) {
-    activeSection.value = sectionId
-  }
-}
 
 function handleSectionSelect(sectionId: string) {
-  activeSection.value = sectionId
-  const element = document.getElementById(`resume-section-${sectionId}`)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  if (!sectionsMap.value.has(sectionId)) {
+    return
   }
+
+  activeSection.value = sectionId
 }
 
 function markSaved() {
   lastSavedAt.value = new Date()
 }
-
-onMounted(() => {
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          visibleSections.set(
-            entry.target.id,
-            entry.intersectionRatio,
-          )
-        } else {
-          visibleSections.delete(entry.target.id)
-        }
-      }
-
-      setActiveSectionFromObserver()
-    },
-    {
-      rootMargin: '-20% 0px -60% 0px',
-      threshold: [0.25, 0.5, 0.75, 1],
-    },
-  )
-
-  sectionElements.forEach((element) => observer?.observe(element))
-})
-
-onBeforeUnmount(() => {
-  observer?.disconnect()
-  observer = null
-  visibleSections.clear()
-  sectionElements.clear()
-})
-
-const { meta_b } = useMagicKeys({ passive: false })
-
-watch(meta_b, (pressed) => {
-  if (pressed) {
-    handleSectionSelect(activeSection.value)
-  }
-})
 </script>
 
 <template>
@@ -177,21 +143,53 @@ watch(meta_b, (pressed) => {
       </Button>
     </template>
 
-    <template #form>
-      <div class="grid gap-8">
-        <div
-          v-for="section in flatSections"
-          :key="section.id"
-          :ref="(el) => assignSectionRef(section.id, el as HTMLElement | null)"
-          :class="[
-            'scroll-mt-28 transition',
-            activeSection === section.id ? 'ring-2 ring-brand/60 ring-offset-1 ring-offset-background' : 'opacity-95',
-          ]"
-        >
-          <component :is="sectionComponents[section.id]" />
+      <template #form>
+        <div class="flex h-full flex-col gap-6">
+          <div class="rounded-2xl border border-border/60 bg-background/90 p-4 shadow-sm">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div class="space-y-1">
+                <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground/80">
+                  Currently editing
+                </p>
+                <h2 class="text-lg font-semibold text-foreground">
+                  {{ activeSectionEntry?.section.label ?? 'Select a section' }}
+                </h2>
+                <p
+                  v-if="activeSectionEntry?.section.description"
+                  class="max-w-prose text-sm text-muted-foreground"
+                >
+                  {{ activeSectionEntry.section.description }}
+                </p>
+              </div>
+
+              <Badge
+                v-if="activeSectionEntry?.section.badge"
+                variant="secondary"
+                class="rounded-full px-3 py-1 text-[0.625rem] uppercase tracking-wide"
+              >
+                {{ activeSectionEntry.section.badge }}
+              </Badge>
+            </div>
+          </div>
+
+          <div class="flex-1">
+            <KeepAlive>
+              <component
+                v-if="activeSectionComponent"
+                :is="activeSectionComponent"
+                :key="activeSection"
+              />
+            </KeepAlive>
+
+            <div
+              v-else
+              class="flex h-full items-center justify-center rounded-2xl border border-dashed border-border/70 bg-background/60 p-8 text-sm text-muted-foreground"
+            >
+              Select a section from the sidebar to start editing.
+            </div>
+          </div>
         </div>
-      </div>
-    </template>
+      </template>
 
     <template #preview>
       <div class="rounded-2xl border border-border/70 bg-gradient-to-br from-brand/10 via-background to-background p-4 text-xs text-muted-foreground">
