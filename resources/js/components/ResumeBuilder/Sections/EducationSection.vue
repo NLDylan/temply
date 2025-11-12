@@ -61,11 +61,11 @@ function addEducation() {
     <div class="grid gap-6">
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-          <GraduationCap class="size-4 text-brand" />
+          <GraduationCap class="size-4 text-primary" />
           Highlight your most relevant education first.
         </div>
         <Button variant="outline" size="sm" class="gap-2" @click="addEducation">
-          <Plus class="size-4" />
+          <Plus class="size-4 text-primary" />
           Add education
         </Button>
       </div>
@@ -74,7 +74,7 @@ function addEducation() {
         <Card
           v-for="entry in education"
           :key="entry.id"
-          class="resume-card p-0 transition-colors duration-200 hover:border-brand/35"
+          class="resume-card p-0 transition-colors duration-200 hover:border-border/70"
         >
           <CardHeader class="flex flex-col gap-3 border-b border-border/20 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -113,7 +113,7 @@ function addEducation() {
               <Label>Honors & activities</Label>
               <textarea
                 v-model="entry.honors"
-                class="rounded-xl border border-border/35 bg-white px-3 py-2 text-sm text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/30 dark:bg-zinc-900"
+                class="rounded-xl border border-border/35 bg-white px-3 py-2 text-sm text-muted-foreground transition focus:border-ring focus:ring-2 focus:ring-ring/30 dark:bg-zinc-900"
                 rows="3"
                 :placeholder="entry.honors ? '' : 'Add scholarships, leadership roles, societies, or awards.'"
               />

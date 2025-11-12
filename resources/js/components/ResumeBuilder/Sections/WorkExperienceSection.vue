@@ -65,11 +65,11 @@ const timeline = computed(() =>
     <div class="grid gap-6">
       <div class="flex justify-between gap-3">
         <div class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-          <ListChecks class="size-4 text-brand" />
+          <ListChecks class="size-4 text-primary" />
           Outline up to 10 years of relevant experience.
         </div>
         <Button variant="outline" size="sm" class="gap-2">
-          <Plus class="size-4" />
+          <Plus class="size-4 text-primary" />
           Add experience
         </Button>
       </div>
@@ -80,7 +80,7 @@ const timeline = computed(() =>
           :key="experience.id"
           open
         >
-          <Card class="resume-card p-0 transition-colors duration-200 hover:border-brand/35">
+          <Card class="resume-card p-0 transition-colors duration-200 hover:border-border/80">
             <div class="px-5 py-4">
               <CollapsibleTrigger as-child>
                 <button
@@ -125,7 +125,7 @@ const timeline = computed(() =>
                         :key="achievement"
                         class="flex items-start gap-3 rounded-xl border border-border/25 bg-card px-4 py-3"
                       >
-                        <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+                        <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                         <p class="text-sm leading-relaxed text-muted-foreground">
                           {{ achievement }}
                         </p>
@@ -133,7 +133,7 @@ const timeline = computed(() =>
                     </ul>
                   </div>
                   <Button variant="ghost" size="sm" class="w-fit gap-2">
-                    <Plus class="size-4" />
+                    <Plus class="size-4 text-primary" />
                     Add achievement
                   </Button>
                 </div>
@@ -156,7 +156,7 @@ const timeline = computed(() =>
                       <Label>Primary focus</Label>
                       <textarea
                         rows="3"
-                        class="rounded-xl border border-border/40 bg-muted/20 px-3 py-2 text-xs text-muted-foreground transition focus:border-brand focus:ring-2 focus:ring-brand/30"
+                        class="rounded-xl border border-border/40 bg-muted/20 px-3 py-2 text-xs text-muted-foreground transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                         placeholder="Led analytics workflows, improved cross-team collaboration, defined product rituals."
                       />
                     </div>

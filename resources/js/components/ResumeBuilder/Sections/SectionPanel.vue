@@ -57,7 +57,7 @@ const statusBadge = computed(() => {
 <template>
   <Card
     :class="cn(
-      'resume-card group/section relative gap-0 p-0 transition-colors duration-200 hover:border-brand/40',
+      'resume-card group/section relative gap-0 p-0 transition-colors duration-200 hover:border-brand/35',
       loading && 'pointer-events-none opacity-75',
     )"
   >

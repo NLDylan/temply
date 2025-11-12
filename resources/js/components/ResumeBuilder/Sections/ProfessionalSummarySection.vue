@@ -25,7 +25,7 @@ const highlightThree = ref('')
             id="summary"
             v-model="summary"
             rows="6"
-            class="rounded-2xl border border-border/35 bg-white px-4 py-3 text-sm leading-relaxed outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:bg-zinc-900"
+            class="rounded-2xl border border-border/35 bg-white px-4 py-3 text-sm leading-relaxed outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30 dark:bg-zinc-900"
             placeholder="Senior product designer with 8+ years shaping data-rich experiences for SaaS platforms..."
           />
         </div>

@@ -88,7 +88,7 @@ function addSkill() {
             <CardHeader class="flex flex-col gap-2 border-b border-border/20 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle class="text-base font-semibold text-foreground">{{ category }}</CardTitle>
               <div class="flex items-center gap-2 text-xs text-muted-foreground">
-                <Equal class="size-4 text-brand" />
+                <Equal class="size-4 text-primary" />
                 Balance between advanced and emerging skills.
               </div>
             </CardHeader>
@@ -135,7 +135,7 @@ function addSkill() {
                   v-for="category in ['Design', 'Research', 'Leadership', 'Technical']"
                   :key="category"
                   variant="ghost"
-                  class="rounded-xl border border-transparent px-3 py-3 text-sm transition hover:border-brand/30 hover:bg-background/90 focus-visible:border-brand"
+                  class="rounded-xl border border-transparent px-3 py-3 text-sm transition hover:border-border/80 hover:bg-muted/20 focus-visible:border-ring"
                   :data-state="newSkill.category === category ? 'active' : 'inactive'"
                   @click="newSkill.category = category as SkillItem['category']"
                 >
@@ -160,7 +160,7 @@ function addSkill() {
             </div>
 
             <Button class="gap-2" @click="addSkill">
-              <Plus class="size-4" />
+              <Plus class="size-4 text-primary" />
               Add skill
             </Button>
           </div>

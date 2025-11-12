@@ -146,33 +146,6 @@ function markSaved() {
 
       <template #form>
         <div class="flex h-full flex-col gap-6">
-          <Card class="resume-card p-0">
-            <CardContent class="flex flex-wrap items-start justify-between gap-4 px-4 py-4">
-              <div class="space-y-1">
-                <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground/80">
-                  Currently editing
-                </p>
-                <h2 class="text-lg font-semibold text-foreground">
-                  {{ activeSectionEntry?.section.label ?? 'Select a section' }}
-                </h2>
-                <p
-                  v-if="activeSectionEntry?.section.description"
-                  class="max-w-prose text-sm text-muted-foreground"
-                >
-                  {{ activeSectionEntry.section.description }}
-                </p>
-              </div>
-
-              <Badge
-                v-if="activeSectionEntry?.section.badge"
-                variant="secondary"
-                class="rounded-full px-3 py-1 text-[0.625rem] uppercase tracking-wide"
-              >
-                {{ activeSectionEntry.section.badge }}
-              </Badge>
-            </CardContent>
-          </Card>
-
           <div class="flex-1">
             <KeepAlive v-if="activeSectionComponent">
               <component
@@ -191,7 +164,7 @@ function markSaved() {
       </template>
 
     <template #preview>
-      <Card class="resume-card border border-border/70 bg-gradient-to-br from-brand/10 via-background to-background p-0 text-xs text-muted-foreground">
+      <Card class="resume-card border border-border/70 bg-muted/30 p-0 text-xs text-muted-foreground">
         <CardContent class="px-4 py-4">
           <p class="mb-2 text-sm font-semibold text-foreground">
             Layout controls

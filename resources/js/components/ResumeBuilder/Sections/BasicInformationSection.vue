@@ -67,7 +67,7 @@ function removeContactLink(id: string) {
               Contact links
             </h3>
             <Button variant="ghost" size="sm" class="h-8 gap-1 px-3 text-[11px] uppercase tracking-wide" @click="addContactLink">
-              <Plus class="size-3.5" />
+              <Plus class="size-3.5 text-primary" />
               Add
             </Button>
           </CardHeader>
@@ -86,7 +86,7 @@ function removeContactLink(id: string) {
                 <Label>URL</Label>
                 <div class="relative">
                   <Input v-model="link.value" placeholder="https://linkedin.com/in/username" class="pl-9" />
-                  <Link2 class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
+                  <Link2 class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-primary/80" />
                 </div>
               </div>
               <Button
@@ -107,7 +107,7 @@ function removeContactLink(id: string) {
         <CardHeader class="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <p class="text-sm font-medium">Profile photo</p>
           <Button variant="ghost" size="sm" class="gap-2">
-            <UploadCloud class="size-4" />
+            <UploadCloud class="size-4 text-primary" />
             Upload
           </Button>
         </CardHeader>
@@ -122,7 +122,7 @@ function removeContactLink(id: string) {
               <AvatarFallback class="rounded-2xl text-sm font-semibold uppercase">JW</AvatarFallback>
             </Avatar>
             <Button variant="outline" size="sm" class="gap-2">
-              <UploadCloud class="size-4" />
+              <UploadCloud class="size-4 text-primary" />
               Replace photo
             </Button>
             <p class="text-[11px] text-muted-foreground">

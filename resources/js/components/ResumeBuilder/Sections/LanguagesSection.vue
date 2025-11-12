@@ -54,7 +54,7 @@ function addLanguage() {
             <div class="grid gap-3">
               <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
-                  <Globe2 class="size-4 text-brand" />
+                  <Globe2 class="size-4 text-primary" />
                   <Input v-model="language.name" placeholder="Language" class="h-9 w-auto bg-card" />
                 </div>
                 <Badge class="rounded-full px-3 py-1 text-[11px] uppercase tracking-wide">
@@ -89,7 +89,7 @@ function addLanguage() {
       </Card>
 
       <Button variant="outline" size="sm" class="w-fit gap-2" @click="addLanguage">
-        <Plus class="size-4" />
+        <Plus class="size-4 text-primary" />
         Add language
       </Button>
     </div>

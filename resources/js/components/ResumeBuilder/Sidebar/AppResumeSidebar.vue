@@ -69,7 +69,7 @@ function handleSelect(section: ResumeSection) {
         :key="group.id"
         class="group-data-[collapsible=icon]:border-b group-data-[collapsible=icon]:border-sidebar-border/60"
       >
-        <SidebarGroupLabel class="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <SidebarGroupLabel class="px-2 text-xs font-semibold uppercase tracking-wide text-primary">
           {{ group.label }}
         </SidebarGroupLabel>
 
