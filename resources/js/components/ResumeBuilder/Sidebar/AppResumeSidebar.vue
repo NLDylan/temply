@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import NavUser from '@/components/NavUser.vue'
 import {
   Sidebar,
   SidebarContent,
@@ -10,21 +9,14 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarSeparator,
 } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
-import { computed } from 'vue'
+import { Link } from '@inertiajs/vue3'
 import AppLogo from '@/components/AppLogo.vue'
-import {
-  ArrowRight,
-  CheckCircle2,
-  LifeBuoy,
-  Pin,
-} from 'lucide-vue-next'
+import { dashboard } from '@/routes'
 import type { ResumeSection } from './sections'
 import { resumeSectionGroups } from './sections'
 
@@ -42,7 +34,6 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   select: [sectionId: string]
-  'open-settings': []
 }>()
 
 function handleSelect(section: ResumeSection) {
@@ -62,8 +53,11 @@ function handleSelect(section: ResumeSection) {
           <SidebarMenuButton
             size="lg"
             class="justify-start group-data-[collapsible=icon]/sidebar:justify-center group-data-[collapsible=icon]/sidebar:px-0 group-data-[collapsible=icon]/sidebar:[&>div]:mx-auto"
+            as-child
           >
-            <AppLogo />
+            <Link :href="dashboard()">
+              <AppLogo />
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -100,22 +94,8 @@ function handleSelect(section: ResumeSection) {
       </SidebarGroup>
     </SidebarContent>
 
-    <SidebarSeparator class="mx-3" />
-
-    <SidebarFooter class="px-3 pb-8 pt-4 group-data-[collapsible=icon]:hidden">
-      <div class="space-y-3 rounded-2xl border border-sidebar-border/70 bg-sidebar-accent/50 p-4 text-xs text-sidebar-foreground/90">
-        <div class="flex items-center gap-2">
-          <LifeBuoy class="size-4" />
-          <span class="font-medium">Need a hand?</span>
-        </div>
-        <p class="leading-relaxed text-sidebar-foreground/80">
-          Access resume writing tips, sample bullet points, and tone suggestions curated by our career team.
-        </p>
-        <Button variant="secondary" size="sm" class="w-full justify-between" @click="emit('open-settings')">
-          Contact support
-          <ArrowRight class="size-4" />
-        </Button>
-      </div>
+    <SidebarFooter class="mt-auto p-2">
+      <NavUser :show-dashboard-link="true" />
     </SidebarFooter>
 
     <SidebarRail />

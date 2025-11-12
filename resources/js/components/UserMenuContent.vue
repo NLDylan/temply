@@ -6,21 +6,24 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { logout } from '@/routes';
+import { dashboard, logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import type { User } from '@/types';
 import { Link, router } from '@inertiajs/vue3';
-import { LogOut, Settings } from 'lucide-vue-next';
+import { LayoutGrid, LogOut, Settings } from 'lucide-vue-next';
 
 interface Props {
     user: User;
+    showDashboardLink?: boolean;
 }
 
 const handleLogout = () => {
     router.flushAll();
 };
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+    showDashboardLink: false,
+});
 </script>
 
 <template>
@@ -31,6 +34,12 @@ defineProps<Props>();
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
     <DropdownMenuGroup>
+        <DropdownMenuItem v-if="showDashboardLink" :as-child="true">
+            <Link class="block w-full" :href="dashboard()" prefetch as="button">
+                <LayoutGrid class="mr-2 h-4 w-4" />
+                Dashboard
+            </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem :as-child="true">
             <Link class="block w-full" :href="edit()" prefetch as="button">
                 <Settings class="mr-2 h-4 w-4" />

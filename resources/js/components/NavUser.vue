@@ -15,9 +15,17 @@ import { usePage } from '@inertiajs/vue3';
 import { ChevronsUpDown } from 'lucide-vue-next';
 import UserMenuContent from './UserMenuContent.vue';
 
+interface Props {
+    showDashboardLink?: boolean;
+}
+
 const page = usePage();
 const user = page.props.auth.user;
 const { isMobile, state } = useSidebar();
+
+withDefaults(defineProps<Props>(), {
+    showDashboardLink: false,
+});
 </script>
 
 <template>
@@ -46,7 +54,7 @@ const { isMobile, state } = useSidebar();
                     align="end"
                     :side-offset="4"
                 >
-                    <UserMenuContent :user="user" />
+                    <UserMenuContent :user="user" :show-dashboard-link="showDashboardLink" />
                 </DropdownMenuContent>
             </DropdownMenu>
         </SidebarMenuItem>
