@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 import SectionPanel from './SectionPanel.vue'
 import { ref } from 'vue'
 import { Link2, Plus, Trash2, UploadCloud } from 'lucide-vue-next'
@@ -61,19 +61,22 @@ function removeContactLink(id: string) {
           </div>
         </div>
 
-        <div class="grid gap-4">
-          <div class="flex items-center gap-2">
+        <Card class="resume-card p-0">
+          <CardHeader class="flex flex-row items-center justify-between gap-2 px-4 py-4">
             <h3 class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Contact Links
+              Contact links
             </h3>
-            <Separator class="flex-1" />
-          </div>
+            <Button variant="ghost" size="sm" class="h-8 gap-1 px-3 text-[11px] uppercase tracking-wide" @click="addContactLink">
+              <Plus class="size-3.5" />
+              Add
+            </Button>
+          </CardHeader>
 
-          <div class="grid gap-3">
+          <CardContent class="divide-y divide-border/20 p-0">
             <div
               v-for="link in contactLinks"
               :key="link.id"
-              class="grid gap-3 rounded-xl border border-border/50 bg-muted/40 p-3 md:grid-cols-[160px,1fr,auto]"
+              class="grid gap-4 px-4 py-4 md:grid-cols-[160px,1fr,auto] md:items-end"
             >
               <div class="grid gap-2">
                 <Label>Label</Label>
@@ -86,46 +89,48 @@ function removeContactLink(id: string) {
                   <Link2 class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/70" />
                 </div>
               </div>
-              <Button variant="ghost" size="icon" class="h-9 w-9 self-end text-muted-foreground" @click="removeContactLink(link.id)">
+              <Button
+                variant="ghost"
+                size="icon"
+                class="h-9 w-9 justify-self-start text-muted-foreground md:justify-self-end"
+                @click="removeContactLink(link.id)"
+              >
                 <Trash2 class="size-4" />
                 <span class="sr-only">Remove link</span>
               </Button>
             </div>
-          </div>
-
-          <Button variant="outline" size="sm" class="w-fit gap-2" @click="addContactLink">
-            <Plus class="size-4" />
-            Add another link
-          </Button>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div class="grid gap-4 rounded-2xl border border-dashed border-border/70 bg-muted/40 p-4">
-        <div class="flex items-center justify-between">
+      <Card class="resume-card p-0">
+        <CardHeader class="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <p class="text-sm font-medium">Profile photo</p>
           <Button variant="ghost" size="sm" class="gap-2">
             <UploadCloud class="size-4" />
             Upload
           </Button>
-        </div>
-        <p class="text-xs text-muted-foreground">
-          A friendly, professional headshot increases response rates. Use a neutral background and natural lighting.
-        </p>
-
-        <div class="flex flex-col items-center gap-3 rounded-xl border border-border/60 bg-background/80 px-4 py-6">
-          <Avatar class="h-20 w-20 rounded-2xl">
-            <AvatarImage src="https://i.pravatar.cc/200?img=32" alt="Profile preview" />
-            <AvatarFallback class="rounded-2xl text-sm font-semibold uppercase">JW</AvatarFallback>
-          </Avatar>
-          <Button variant="outline" size="sm" class="gap-2">
-            <UploadCloud class="size-4" />
-            Replace photo
-          </Button>
-          <p class="text-[11px] text-muted-foreground">
-            Minimum 400x400px · PNG or JPG
+        </CardHeader>
+        <CardContent class="grid gap-4 px-4 pb-4">
+          <p class="text-xs text-muted-foreground">
+            A friendly, professional headshot increases response rates. Use a neutral background and natural lighting.
           </p>
-        </div>
-      </div>
+
+          <div class="flex flex-col items-center gap-3 rounded-xl border border-border/40 bg-card px-4 py-6">
+            <Avatar class="h-20 w-20 rounded-2xl">
+              <AvatarImage src="https://i.pravatar.cc/200?img=32" alt="Profile preview" />
+              <AvatarFallback class="rounded-2xl text-sm font-semibold uppercase">JW</AvatarFallback>
+            </Avatar>
+            <Button variant="outline" size="sm" class="gap-2">
+              <UploadCloud class="size-4" />
+              Replace photo
+            </Button>
+            <p class="text-[11px] text-muted-foreground">
+              Minimum 400x400px · PNG or JPG
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   </SectionPanel>
 </template>

@@ -65,7 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
           <div class="flex flex-1 flex-col gap-6 overflow-hidden lg:flex-row">
             <section
               :class="cn(
-                'flex-1 overflow-y-auto rounded-2xl border border-border/60 bg-card/60 p-4 shadow-sm backdrop-blur-sm',
+                'flex-1 overflow-y-auto px-1 py-2 sm:px-2',
                 'scrollbar-thin scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/30',
                 props.formClass,
               )"

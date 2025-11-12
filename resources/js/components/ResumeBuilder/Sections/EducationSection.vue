@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import SectionPanel from './SectionPanel.vue'
@@ -74,22 +74,22 @@ function addEducation() {
         <Card
           v-for="entry in education"
           :key="entry.id"
-          class="border-border/60 bg-muted/20 transition hover:border-brand/40"
+          class="resume-card p-0 transition-colors duration-200 hover:border-brand/35"
         >
-          <CardHeader class="flex flex-col gap-2 border-b border-border/70 sm:flex-row sm:items-center sm:justify-between">
+          <CardHeader class="flex flex-col gap-3 border-b border-border/20 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle class="text-base font-semibold">{{ entry.school }}</CardTitle>
+              <CardTitle class="text-base font-semibold text-foreground">{{ entry.school }}</CardTitle>
               <CardDescription>
                 {{ entry.credential }} · {{ entry.focus }}
               </CardDescription>
             </div>
             <div class="flex items-center gap-2 text-xs text-muted-foreground">
-              <span class="rounded-full bg-background/80 px-2 py-1">
+              <span class="rounded-full bg-muted/20 px-2 py-1">
                 {{ entry.start }} — {{ entry.end }}
               </span>
             </div>
           </CardHeader>
-          <CardContent class="grid gap-4 pt-4">
+          <CardContent class="grid gap-4 px-5 py-4">
             <div class="grid gap-4 md:grid-cols-2">
               <div class="grid gap-2">
                 <Label>Credential / Degree</Label>
@@ -113,7 +113,7 @@ function addEducation() {
               <Label>Honors & activities</Label>
               <textarea
                 v-model="entry.honors"
-                class="rounded-xl border border-border/60 bg-background/95 px-3 py-2 text-sm text-muted-foreground shadow-inner focus:border-brand focus:ring-2 focus:ring-brand/30"
+                class="rounded-xl border border-border/35 bg-white px-3 py-2 text-sm text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/30 dark:bg-zinc-900"
                 rows="3"
                 :placeholder="entry.honors ? '' : 'Add scholarships, leadership roles, societies, or awards.'"
               />

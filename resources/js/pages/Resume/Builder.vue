@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/vue3'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import ResumeBuilderLayout from '@/layouts/resume/ResumeBuilderLayout.vue'
 import {
   AppResumeSidebar,
@@ -145,8 +146,8 @@ function markSaved() {
 
       <template #form>
         <div class="flex h-full flex-col gap-6">
-          <div class="rounded-2xl border border-border/60 bg-background/90 p-4 shadow-sm">
-            <div class="flex flex-wrap items-start justify-between gap-4">
+          <Card class="resume-card p-0">
+            <CardContent class="flex flex-wrap items-start justify-between gap-4 px-4 py-4">
               <div class="space-y-1">
                 <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground/80">
                   Currently editing
@@ -169,18 +170,16 @@ function markSaved() {
               >
                 {{ activeSectionEntry.section.badge }}
               </Badge>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           <div class="flex-1">
-            <KeepAlive>
+            <KeepAlive v-if="activeSectionComponent">
               <component
-                v-if="activeSectionComponent"
                 :is="activeSectionComponent"
                 :key="activeSection"
               />
             </KeepAlive>
-
             <div
               v-else
               class="flex h-full items-center justify-center rounded-2xl border border-dashed border-border/70 bg-background/60 p-8 text-sm text-muted-foreground"
@@ -192,28 +191,30 @@ function markSaved() {
       </template>
 
     <template #preview>
-      <div class="rounded-2xl border border-border/70 bg-gradient-to-br from-brand/10 via-background to-background p-4 text-xs text-muted-foreground">
-        <p class="mb-2 text-sm font-semibold text-foreground">
-          Layout controls
-        </p>
-        <p>
-          Experiment with color accents, typography presets, and spacing. Preview updates instantly and export when you are ready.
-        </p>
-        <div class="mt-3 grid gap-2">
-          <div class="flex items-center justify-between rounded-xl border border-border/50 bg-background/80 px-3 py-2 text-xs">
-            <span>Primary accent</span>
-            <span class="font-medium text-foreground">Brand</span>
+      <Card class="resume-card border border-border/70 bg-gradient-to-br from-brand/10 via-background to-background p-0 text-xs text-muted-foreground">
+        <CardContent class="px-4 py-4">
+          <p class="mb-2 text-sm font-semibold text-foreground">
+            Layout controls
+          </p>
+          <p>
+            Experiment with color accents, typography presets, and spacing. Preview updates instantly and export when you are ready.
+          </p>
+          <div class="mt-3 grid gap-2">
+            <div class="flex items-center justify-between rounded-xl border border-border/50 bg-background/80 px-3 py-2 text-xs">
+              <span>Primary accent</span>
+              <span class="font-medium text-foreground">Brand</span>
+            </div>
+            <div class="flex items-center justify-between rounded-xl border border-border/50 bg-background/80 px-3 py-2 text-xs">
+              <span>Typography</span>
+              <span class="font-medium text-foreground">Grotesk · 12/16</span>
+            </div>
+            <div class="flex items-center justify-between rounded-xl border border-border/50 bg-background/80 px-3 py-2 text-xs">
+              <span>Spacing</span>
+              <span class="font-medium text-foreground">Compact</span>
+            </div>
           </div>
-          <div class="flex items-center justify-between rounded-xl border border-border/50 bg-background/80 px-3 py-2 text-xs">
-            <span>Typography</span>
-            <span class="font-medium text-foreground">Grotesk · 12/16</span>
-          </div>
-          <div class="flex items-center justify-between rounded-xl border border-border/50 bg-background/80 px-3 py-2 text-xs">
-            <span>Spacing</span>
-            <span class="font-medium text-foreground">Compact</span>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </template>
   </ResumeBuilderLayout>
 </template>

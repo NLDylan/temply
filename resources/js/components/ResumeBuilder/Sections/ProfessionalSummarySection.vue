@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SectionPanel from './SectionPanel.vue'
 import { ref } from 'vue'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 
@@ -24,16 +25,18 @@ const highlightThree = ref('')
             id="summary"
             v-model="summary"
             rows="6"
-            class="rounded-2xl border border-border/60 bg-background/95 px-4 py-3 text-sm leading-relaxed shadow-inner outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30"
+            class="rounded-2xl border border-border/35 bg-white px-4 py-3 text-sm leading-relaxed outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/30 dark:bg-zinc-900"
             placeholder="Senior product designer with 8+ years shaping data-rich experiences for SaaS platforms..."
           />
         </div>
 
-        <div class="grid gap-4 rounded-2xl border border-dashed border-border/60 bg-muted/30 p-4">
-          <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Key proof points
-          </p>
-          <div class="grid gap-3 md:grid-cols-3">
+        <Card class="resume-card p-0">
+          <CardHeader class="px-4 py-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Key proof points
+            </p>
+          </CardHeader>
+          <CardContent class="grid gap-3 px-4 pb-4 md:grid-cols-3">
             <div class="grid gap-2">
               <Label for="highlight-one">Strength</Label>
               <Input
@@ -58,19 +61,23 @@ const highlightThree = ref('')
                 placeholder="Trusted partner to product, data, and research leads"
               />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div class="rounded-2xl border border-border/60 bg-muted/20 p-4 text-xs text-muted-foreground">
-        <p class="font-medium text-foreground">Guidelines</p>
-        <ul class="mt-2 space-y-1 list-disc pl-4">
+      <Card class="resume-card p-0 text-xs text-muted-foreground">
+        <CardHeader class="px-4 py-4">
+          <CardTitle class="text-sm font-medium text-foreground">Guidelines</CardTitle>
+        </CardHeader>
+        <CardContent class="px-4 pb-4">
+          <ul class="space-y-1 list-disc pl-4">
           <li>Lead with your title, experience, and specialty.</li>
           <li>Mention 2–3 strengths supported by measurable outcomes.</li>
           <li>Highlight a signature achievement that shows the scale you operate at.</li>
           <li>Finish with the type of roles or impact you’re targeting next.</li>
-        </ul>
-      </div>
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   </SectionPanel>
 </template>
