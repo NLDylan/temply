@@ -73,7 +73,7 @@ class AchievementController extends Controller
     /**
      * Sync all achievement entries for a resume.
      */
-    public function sync(Request $request, Resume $resume): JsonResponse
+    public function sync(Request $request, Resume $resume): JsonResponse|RedirectResponse|Response
     {
         if ($resume->user_id !== $request->user()->id) {
             abort(404);
@@ -94,8 +94,37 @@ class AchievementController extends Controller
 
         $achievements = $this->service->syncAchievements($resume, $request->input('achievements', []));
 
-        return response()->json([
-            'achievements' => $achievements->map(fn (ResumeAchievement $a) => $a->toArray())->values()->all(),
-        ]);
+        // Reload the resume with updated achievements
+        $resume->load('achievements');
+
+        if ($request->header('X-Inertia')) {
+            // Return Inertia response with updated resume data
+            return redirect()
+                ->route('resumes.edit', $resume)
+                ->with('success', 'Achievements saved.');
+        }
+
+        if ($request->wantsJson()) {
+            $achievementsData = $achievements->map(fn (ResumeAchievement $a) => [
+                'id' => $a->id,
+                'resume_id' => $a->resume_id,
+                'title' => $a->title,
+                'issuer' => $a->issuer,
+                'achieved_on' => $a->achieved_on?->toDateString(),
+                'category' => $a->category,
+                'url' => $a->url,
+                'description' => $a->description,
+                'sort_order' => $a->sort_order,
+                'metadata' => $a->metadata,
+            ])->values()->all();
+
+            return response()->json([
+                'achievements' => $achievementsData,
+            ]);
+        }
+
+        return redirect()
+            ->route('resumes.edit', $resume)
+            ->with('success', 'Achievements saved.');
     }
 }

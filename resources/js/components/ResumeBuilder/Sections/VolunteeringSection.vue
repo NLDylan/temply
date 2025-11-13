@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import SectionPanel from './SectionPanel.vue'
-import { computed, ref } from 'vue'
-import { CalendarRange, ChevronDown, Heart, Plus } from 'lucide-vue-next'
+import { computed, ref, watch } from 'vue'
+import { CalendarRange, ChevronDown, Heart, Plus, Trash2 } from 'lucide-vue-next'
+import { router } from '@inertiajs/vue3'
+import { sync as syncVolunteering } from '@/routes/resumes/volunteering'
 import type { ResumeVolunteering } from '@/types/resume'
+import { useDebounceFn } from '@vueuse/core'
 
 interface Props {
+  resumeId: string
   volunteering?: ResumeVolunteering[]
 }
 
@@ -20,11 +24,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 const volunteering = ref<ResumeVolunteering[]>(
   props.volunteering.length > 0
-    ? props.volunteering
+    ? [...props.volunteering]
     : [
         {
           id: crypto.randomUUID(),
-          resume_id: '',
+          resume_id: props.resumeId,
           organization: '',
           role: null,
           location: null,
@@ -38,6 +42,10 @@ const volunteering = ref<ResumeVolunteering[]>(
       ],
 )
 
+const isSaving = ref(false)
+const saveError = ref<string | null>(null)
+const lastSaved = ref<Date | null>(null)
+
 const timeline = computed(() =>
   volunteering.value.map((entry, index) => ({
     ...entry,
@@ -49,7 +57,7 @@ function addVolunteering() {
   volunteering.value = [
     {
       id: crypto.randomUUID(),
-      resume_id: '',
+      resume_id: props.resumeId,
       organization: '',
       role: null,
       location: null,
@@ -64,6 +72,14 @@ function addVolunteering() {
   ]
 }
 
+function removeVolunteering(id: string) {
+  const index = volunteering.value.findIndex((v) => v.id === id)
+  if (index !== -1) {
+    volunteering.value.splice(index, 1)
+    save()
+  }
+}
+
 function formatDate(date: string | null): string {
   if (!date) {
     return ''
@@ -74,6 +90,108 @@ function formatDate(date: string | null): string {
     year: 'numeric',
   })
 }
+
+function prepareDataForSync(): Array<Partial<ResumeVolunteering>> {
+  return volunteering.value.map((entry, index) => {
+    const data: Partial<ResumeVolunteering> = {
+      organization: entry.organization || '',
+      role: entry.role || null,
+      location: entry.location || null,
+      started_on: entry.started_on || null,
+      ended_on: entry.is_current ? null : entry.ended_on || null,
+      is_current: entry.is_current || false,
+      description: entry.description || null,
+      sort_order: index,
+      metadata: entry.metadata || null,
+    }
+
+    // Only include id if it exists and is not empty
+    if (entry.id && entry.id !== '') {
+      data.id = entry.id
+    }
+
+    return data
+  })
+}
+
+function save() {
+  const dataToSave = prepareDataForSync().filter(
+    (entry) => entry.organization && entry.organization.trim() !== '',
+  )
+
+  // Only save if we have at least one entry with content
+  // Don't save empty arrays (which would delete everything)
+  if (dataToSave.length === 0) {
+    return
+  }
+
+  isSaving.value = true
+  saveError.value = null
+
+  router.post(
+    syncVolunteering.url({ resume: props.resumeId }),
+    {
+      volunteering: dataToSave,
+    },
+    {
+      preserveScroll: true,
+      preserveState: false,
+      onSuccess: () => {
+        lastSaved.value = new Date()
+        saveError.value = null
+        // The redirect will reload the resume data with updated IDs
+      },
+      onError: (errors) => {
+        saveError.value =
+          errors.volunteering || errors.message || 'Failed to save volunteering entries.'
+      },
+      onFinish: () => {
+        isSaving.value = false
+      },
+    },
+  )
+}
+
+const debouncedSave = useDebounceFn(save, 1000)
+
+// Watch for changes in volunteering data and auto-save
+watch(
+  () => JSON.stringify(volunteering.value.map((v) => ({
+    organization: v.organization,
+    role: v.role,
+    location: v.location,
+    started_on: v.started_on,
+    ended_on: v.ended_on,
+    is_current: v.is_current,
+    description: v.description,
+  }))),
+  () => {
+    // Only save if we have at least one entry with content
+    const hasContent = volunteering.value.some(
+      (entry) => entry.organization && entry.organization.trim() !== '',
+    )
+    if (hasContent) {
+      debouncedSave()
+    }
+  },
+  { deep: false },
+)
+
+// Sync with props when they change (after server save)
+watch(
+  () => props.volunteering,
+  (newVolunteering) => {
+    if (newVolunteering && newVolunteering.length > 0) {
+      // Only update if the data is actually different to avoid loops
+      const currentIds = volunteering.value.map((v) => v.id).sort().join(',')
+      const newIds = newVolunteering.map((v) => v.id).sort().join(',')
+      if (currentIds !== newIds) {
+        volunteering.value = [...newVolunteering]
+      }
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -86,12 +204,23 @@ function formatDate(date: string | null): string {
       <div class="flex justify-between gap-3">
         <div class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <Heart class="size-4 text-primary" />
-          Showcase your community contributions.
+          <span>Showcase your community contributions.</span>
+          <span v-if="isSaving" class="text-xs text-muted-foreground">(Saving...)</span>
+          <span
+            v-else-if="lastSaved"
+            class="text-xs text-muted-foreground"
+          >
+            (Saved {{ lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }})
+          </span>
         </div>
         <Button variant="outline" size="sm" class="gap-2" @click="addVolunteering">
           <Plus class="size-4 text-primary" />
           Add volunteering
         </Button>
+      </div>
+
+      <div v-if="saveError" class="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+        {{ saveError }}
       </div>
 
       <div class="grid gap-6">
@@ -157,11 +286,24 @@ function formatDate(date: string | null): string {
                 </div>
 
                 <Card class="resume-card p-4">
-                  <p class="text-sm font-medium text-foreground">Details</p>
-                  <p class="mt-1 text-xs text-muted-foreground">
-                    These fields appear on your resume.
-                  </p>
-                  <div class="mt-4 grid gap-3">
+                  <div class="mb-4 flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-foreground">Details</p>
+                      <p class="mt-1 text-xs text-muted-foreground">
+                        These fields appear on your resume.
+                      </p>
+                    </div>
+                    <Button
+                      v-if="volunteering.length > 1"
+                      variant="ghost"
+                      size="sm"
+                      class="text-destructive hover:text-destructive"
+                      @click="removeVolunteering(entry.id)"
+                    >
+                      <Trash2 class="size-4" />
+                    </Button>
+                  </div>
+                  <div class="grid gap-3">
                     <div class="grid gap-2">
                       <Label>Organization</Label>
                       <Input v-model="entry.organization" placeholder="Organization name" />
@@ -193,12 +335,12 @@ function formatDate(date: string | null): string {
                     </div>
                     <div class="flex items-center gap-2">
                       <input
-                        id="is-current"
+                        :id="`is-current-${entry.id}`"
                         v-model="entry.is_current"
                         type="checkbox"
                         class="rounded border-border"
                       />
-                      <Label for="is-current" class="text-sm">Currently volunteering</Label>
+                      <Label :for="`is-current-${entry.id}`" class="text-sm">Currently volunteering</Label>
                     </div>
                   </div>
                 </Card>
@@ -210,4 +352,3 @@ function formatDate(date: string | null): string {
     </div>
   </SectionPanel>
 </template>
-

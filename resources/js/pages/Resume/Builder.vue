@@ -119,9 +119,11 @@ const sectionProps = computed<Record<string, Record<string, unknown>>>(() => ({
     form,
   },
   volunteering: {
+    resumeId: props.resume.id,
     volunteering: props.resume.volunteering,
   },
   achievements: {
+    resumeId: props.resume.id,
     achievements: props.resume.achievements,
   },
 }))

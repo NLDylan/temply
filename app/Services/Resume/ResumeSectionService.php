@@ -20,7 +20,11 @@ class ResumeSectionService
         $resume->volunteering()->whereNotIn('id', $existingIds)->delete();
 
         $volunteering = collect($volunteeringData)->map(function (array $data, int $index) use ($resume): ResumeVolunteering {
-            $volunteering = ResumeVolunteering::firstOrNew(['id' => $data['id'] ?? null]);
+            $id = $data['id'] ?? null;
+            $volunteering = $id
+                ? ResumeVolunteering::firstOrNew(['id' => $id])
+                : new ResumeVolunteering;
+
             $volunteering->resume_id = $resume->id;
             $volunteering->organization = $data['organization'] ?? '';
             $volunteering->role = $data['role'] ?? null;
@@ -50,7 +54,11 @@ class ResumeSectionService
         $resume->achievements()->whereNotIn('id', $existingIds)->delete();
 
         $achievements = collect($achievementsData)->map(function (array $data, int $index) use ($resume): ResumeAchievement {
-            $achievement = ResumeAchievement::firstOrNew(['id' => $data['id'] ?? null]);
+            $id = $data['id'] ?? null;
+            $achievement = $id
+                ? ResumeAchievement::firstOrNew(['id' => $id])
+                : new ResumeAchievement;
+
             $achievement->resume_id = $resume->id;
             $achievement->title = $data['title'] ?? '';
             $achievement->issuer = $data['issuer'] ?? null;

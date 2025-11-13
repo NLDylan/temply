@@ -73,7 +73,7 @@ class VolunteeringController extends Controller
     /**
      * Sync all volunteering entries for a resume.
      */
-    public function sync(Request $request, Resume $resume): JsonResponse
+    public function sync(Request $request, Resume $resume): JsonResponse|RedirectResponse|Response
     {
         if ($resume->user_id !== $request->user()->id) {
             abort(404);
@@ -95,8 +95,28 @@ class VolunteeringController extends Controller
 
         $volunteering = $this->service->syncVolunteering($resume, $request->input('volunteering', []));
 
-        return response()->json([
-            'volunteering' => $volunteering->map(fn (ResumeVolunteering $v) => $v->toArray())->values()->all(),
-        ]);
+        if ($request->wantsJson() && ! $request->header('X-Inertia')) {
+            $volunteeringData = $volunteering->map(fn (ResumeVolunteering $v) => [
+                'id' => $v->id,
+                'resume_id' => $v->resume_id,
+                'organization' => $v->organization,
+                'role' => $v->role,
+                'location' => $v->location,
+                'started_on' => $v->started_on?->toDateString(),
+                'ended_on' => $v->ended_on?->toDateString(),
+                'is_current' => $v->is_current,
+                'description' => $v->description,
+                'sort_order' => $v->sort_order,
+                'metadata' => $v->metadata,
+            ])->values()->all();
+
+            return response()->json([
+                'volunteering' => $volunteeringData,
+            ]);
+        }
+
+        return redirect()
+            ->route('resumes.edit', $resume)
+            ->with('success', 'Volunteering entries saved.');
     }
 }
