@@ -13,6 +13,11 @@ class ResumeEducation extends Model
     use HasUuids;
 
     /**
+     * @var string
+     */
+    protected $table = 'resume_educations';
+
+    /**
      * @var array<int, string>
      */
     protected $fillable = [

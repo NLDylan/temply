@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ResumeExperience extends Model
+class ResumeVolunteering extends Model
 {
     use HasFactory;
     use HasUuids;
@@ -15,22 +15,22 @@ class ResumeExperience extends Model
     /**
      * @var string
      */
-    protected $table = 'resume_experiences';
+    protected $table = 'resume_volunteerings';
 
     /**
      * @var array<int, string>
      */
     protected $fillable = [
         'resume_id',
-        'company',
+        'organization',
         'role',
-        'employment_type',
         'location',
         'started_on',
         'ended_on',
         'is_current',
         'description',
         'sort_order',
+        'metadata',
     ];
 
     /**
@@ -42,6 +42,7 @@ class ResumeExperience extends Model
             'started_on' => 'date',
             'ended_on' => 'date',
             'is_current' => 'boolean',
+            'metadata' => 'array',
         ];
     }
 

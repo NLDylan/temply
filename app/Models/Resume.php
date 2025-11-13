@@ -87,4 +87,14 @@ class Resume extends Model
     {
         return $this->hasMany(ResumeProject::class)->orderBy('sort_order');
     }
+
+    public function volunteering(): HasMany
+    {
+        return $this->hasMany(ResumeVolunteering::class)->orderBy('sort_order');
+    }
+
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(ResumeAchievement::class)->orderBy('sort_order');
+    }
 }

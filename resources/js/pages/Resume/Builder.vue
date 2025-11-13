@@ -13,11 +13,13 @@ import type {
   ResumeSectionGroup,
 } from '@/components/ResumeBuilder/Sidebar'
 import {
+  AchievementsSection,
   BasicInformationSection,
   EducationSection,
   LanguagesSection,
   ProfessionalSummarySection,
   SkillsSection,
+  VolunteeringSection,
   WorkExperienceSection,
 } from '@/components/ResumeBuilder/Sections'
 import type { Component } from 'vue'
@@ -79,12 +81,12 @@ const sectionComponents: Record<string, Component> = {
   'focus-roles': ProfessionalSummarySection,
   'work-experience': WorkExperienceSection,
   projects: WorkExperienceSection,
-  achievements: WorkExperienceSection,
+  achievements: AchievementsSection,
   education: EducationSection,
   skills: SkillsSection,
   languages: LanguagesSection,
   certifications: EducationSection,
-  volunteering: WorkExperienceSection,
+  volunteering: VolunteeringSection,
   'custom-sections': ProfessionalSummarySection,
 } as const
 
@@ -115,6 +117,12 @@ const activeSectionComponent = computed<Component | null>(
 const sectionProps = computed<Record<string, Record<string, unknown>>>(() => ({
   'basic-info': {
     form,
+  },
+  volunteering: {
+    volunteering: props.resume.volunteering,
+  },
+  achievements: {
+    achievements: props.resume.achievements,
   },
 }))
 

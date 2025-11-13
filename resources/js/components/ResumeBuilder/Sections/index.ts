@@ -5,4 +5,6 @@ export { default as WorkExperienceSection } from './WorkExperienceSection.vue'
 export { default as EducationSection } from './EducationSection.vue'
 export { default as SkillsSection } from './SkillsSection.vue'
 export { default as LanguagesSection } from './LanguagesSection.vue'
+export { default as VolunteeringSection } from './VolunteeringSection.vue'
+export { default as AchievementsSection } from './AchievementsSection.vue'
 
