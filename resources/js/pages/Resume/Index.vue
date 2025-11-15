@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { index as resumesIndex, edit as resumesEdit } from '@/routes/resumes';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -13,7 +13,19 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Download, Eye, Pencil, Trash2 } from 'lucide-vue-next';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Copy, Download, Eye, Pencil, Plus, Trash2 } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface ResumeSummary {
     id: string;
@@ -56,6 +68,46 @@ function formatDate(value?: string | null): string {
 
     return dateFormatter.format(parsedDate);
 }
+
+const createDialogOpen = ref(false);
+const createForm = useForm({
+    title: '',
+});
+
+function submitCreateForm(): void {
+    createForm.post('/resumes', {
+        preserveScroll: true,
+        onSuccess: () => {
+            createDialogOpen.value = false;
+            createForm.reset();
+        },
+    });
+}
+
+const deleteDialogOpen = ref<Record<string, boolean>>({});
+
+function openDeleteDialog(resumeId: string): void {
+    deleteDialogOpen.value[resumeId] = true;
+}
+
+function closeDeleteDialog(resumeId: string): void {
+    deleteDialogOpen.value[resumeId] = false;
+}
+
+function deleteResume(resumeId: string): void {
+    router.delete(`/resumes/${resumeId}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            closeDeleteDialog(resumeId);
+        },
+    });
+}
+
+function duplicateResume(resumeId: string): void {
+    router.post(`/resumes/${resumeId}/duplicate`, {}, {
+        preserveScroll: true,
+    });
+}
 </script>
 
 <template>
@@ -63,12 +115,64 @@ function formatDate(value?: string | null): string {
         <Head title="Resumes" />
 
         <section class="flex flex-1 flex-col gap-6 p-6">
-            <header class="space-y-2">
-                <h1 class="text-2xl font-semibold tracking-tight">Resumes</h1>
-                <p class="text-sm text-muted-foreground">
-                    Review and manage the resumes you&rsquo;ve crafted. Actions are
-                    coming soon.
-                </p>
+            <header class="flex items-center justify-between">
+                <div class="space-y-2">
+                    <h1 class="text-2xl font-semibold tracking-tight">Resumes</h1>
+                    <p class="text-sm text-muted-foreground">
+                        Review and manage the resumes you&rsquo;ve crafted.
+                    </p>
+                </div>
+                <Dialog v-model:open="createDialogOpen">
+                    <DialogTrigger as-child>
+                        <Button>
+                            <Plus class="mr-2 h-4 w-4" />
+                            Create Resume
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <form @submit.prevent="submitCreateForm">
+                            <DialogHeader>
+                                <DialogTitle>Create New Resume</DialogTitle>
+                                <DialogDescription>
+                                    Enter a title for your new resume. You can edit
+                                    this later.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div class="grid gap-4 py-4">
+                                <div class="grid gap-2">
+                                    <Label for="title">Title</Label>
+                                    <Input
+                                        id="title"
+                                        v-model="createForm.title"
+                                        placeholder="e.g., Software Engineer Resume"
+                                        required
+                                    />
+                                    <p
+                                        v-if="createForm.errors.title"
+                                        class="text-sm text-destructive"
+                                    >
+                                        {{ createForm.errors.title }}
+                                    </p>
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    @click="createDialogOpen = false"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    :disabled="createForm.processing"
+                                >
+                                    Create
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </header>
 
             <div
@@ -121,13 +225,52 @@ function formatDate(value?: string | null): string {
                         </Button>
                         <Button
                             size="sm"
-                            variant="destructive"
-                            class="disabled:opacity-60"
-                            disabled
+                            variant="outline"
+                            @click="duplicateResume(resume.id)"
                         >
-                            <Trash2 class="mr-2 h-4 w-4" />
-                            Delete
+                            <Copy class="mr-2 h-4 w-4" />
+                            Duplicate
                         </Button>
+                        <Dialog
+                            v-model:open="deleteDialogOpen[resume.id]"
+                        >
+                            <DialogTrigger as-child>
+                                <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    @click="openDeleteDialog(resume.id)"
+                                >
+                                    <Trash2 class="mr-2 h-4 w-4" />
+                                    Delete
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Delete Resume</DialogTitle>
+                                    <DialogDescription>
+                                        Are you sure you want to delete
+                                        &ldquo;{{ resume.title }}&rdquo;? This action
+                                        cannot be undone.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        @click="closeDeleteDialog(resume.id)"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="destructive"
+                                        @click="deleteResume(resume.id)"
+                                    >
+                                        Delete
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </CardFooter>
                 </Card>
             </div>
